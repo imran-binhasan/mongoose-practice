@@ -40,7 +40,11 @@ app.post('/products',async(req,res) => {
             description: req.body.description,
         });
         const result = await newProduct.save();
-        res.status(201).send(result)
+        res.status(201).send({
+            success:true,
+            message:'successfully created !',
+            data:result
+        })
     }catch (error) {
         res.status(400).json({message:error.message})
     }
@@ -73,6 +77,72 @@ app.get('/product/:id',async(req,res)=>{
         res.status(404).json({message:error.message})
     }
 })
+
+// Delete 
+app.delete('/product/:id',async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await Product.findByIdAndDelete({_id:id})
+        res.send({
+            success:true,
+            message:'successfully deleted !',
+            data:result})
+    } catch (error) {
+        res.status(404).json({message:error.message})
+    }
+})
+
+
+// Update 
+app.patch('/product/:id',async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const result = await Product.findByIdAndUpdate({_id:id},{
+            $set:{
+                price: 690
+            },
+        },
+        {
+            new:true
+        }
+    )
+        res.send({
+            success:true,
+            message:'successfully updated !',
+            data:result})
+    } catch (error) {
+        res.status(404).json({message:error.message})
+    }
+})
+
+app.put('/product/:id',async(req,res)=>{
+    try {
+       const id = req.params.id;
+       const result =await Product.findByIdAndUpdate({_id:id},{
+        $set:{
+            title:req.body.title,
+            price:req.body.price,
+            description:req.body.description,
+        }
+       },
+       {new: true}
+    );
+       res.send({
+        success:true,
+        message:'successfully updated !',
+        data:result
+       })
+    } catch (error) {
+        res.status(404).json({message:error.message})
+    }
+})
+
+
+
+
+
+
+
 
 app.listen(port, () => {
   console.log(`Server running on: ${port}`);
